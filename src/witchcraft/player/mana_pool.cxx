@@ -11,14 +11,14 @@ namespace player
 
   void mana_pool::add(const card::mana& mana, player::mana_pool::amount_type amount)
   {
-    if (mana.type() != card::mana::types::basic && mana.type() != card::mana::types::snow) return;
+    if (!is_valid_mana(mana)) return;
 
     m_mana[mana] += amount;
   }
 
   void mana_pool::remove(const card::mana& mana, player::mana_pool::amount_type amount)
   {
-    if (mana.type() != card::mana::types::basic && mana.type() != card::mana::types::snow) return;
+    if (!is_valid_mana(mana)) return;
 
     if (mana_amount(mana) < amount)
       m_mana[mana] = 0;
@@ -51,7 +51,7 @@ namespace player
 
       for (auto& mana : cost)
       {
-        payable &= mana.second <= mana_amount(mana.first);
+        payable &= (mana.second <= mana_amount(mana.first)) || mana.first.is_undefined_amount();
       }
     }
     return payable;

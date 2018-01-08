@@ -48,4 +48,12 @@ TEST_CASE("test mana pool", "[player]")
     REQUIRE(pool.is_payable(card::mana_cost::from_string("GGR")));
     REQUIRE_FALSE(pool.is_payable(card::mana_cost::from_string("BU")));
   }
+
+  SECTION("test payable of undefined amount")
+  {
+    player::mana_pool pool;
+    pool.add(card::mana::black, 1);
+
+    REQUIRE(pool.is_payable(card::mana_cost::from_string("XYZB")));
+  }
 }

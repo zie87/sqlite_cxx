@@ -1,6 +1,7 @@
 #ifndef WITCHCRAFT_CARD_MANA_HXX
 #define WITCHCRAFT_CARD_MANA_HXX
 
+#include <bitset>
 #include <string>
 
 namespace card
@@ -12,21 +13,39 @@ namespace card
 
   public:
     using amount_type = unsigned int;
+    using flag_type = uint16_t;
+    using bit_type = std::bitset<16>;
 
-    enum class types
+    struct atoms
     {
-      basic,
-      snow,
-      waste,
-      hybrid,
-      phyrexian
+      static constexpr flag_type colorless = 0;
+      static constexpr flag_type white = 1 << 0;
+      static constexpr flag_type blue = 1 << 1;
+      static constexpr flag_type black = 1 << 2;
+      static constexpr flag_type red = 1 << 3;
+      static constexpr flag_type green = 1 << 4;
+
+      static constexpr flag_type generic = 1 << 6;
+
+      static constexpr flag_type undefined_amount = 1 << 8;
+      static constexpr flag_type or_2_colorless = 1 << 9;
+      static constexpr flag_type or_2_life = 1 << 10;
+      static constexpr flag_type snow = 1 << 11;
     };
 
-    inline constexpr operator int() const noexcept { return m_index; }
+    inline constexpr operator index_type() const noexcept { return m_index; }
     inline const std::string& to_string() const noexcept { return m_str; }
 
-    inline types type() const noexcept { return m_type; }
-    inline amount_type cmd_amount() const noexcept { return m_cmd_amount; }
+    inline bool is_kind_of_atom(flag_type atom) const noexcept { return (m_atom & atom) != 0; }
+
+    inline bool is_basic() const noexcept { return m_atom <= atoms::generic; }
+    inline bool is_waste() const noexcept { return is_kind_of_atom(atoms::colorless) && !is_kind_of_atom(atoms::generic); }
+    inline bool is_snow() const noexcept { return is_kind_of_atom(atoms::snow); }
+    inline bool is_hybrid() const noexcept { return is_kind_of_atom(atoms::or_2_life) || (bit_type(m_atom & color_mask).count() == 2); }
+    inline bool is_phyrexian() const noexcept { return is_kind_of_atom(atoms::or_2_life); }
+
+    inline bool is_undefined_amount() const noexcept { return is_kind_of_atom(atoms::undefined_amount); }
+    inline amount_type cmd_amount() const noexcept { return is_undefined_amount() ? 0 : 1; }
 
     static const mana white;
     static const mana blue;
@@ -42,15 +61,13 @@ namespace card
     virtual ~mana() = default;
 
   protected:
-    explicit mana(const std::string& str, types t, amount_type amount) : m_index(index_counter++), m_str(str), m_type(t), m_cmd_amount(amount) {}
+    explicit mana(const std::string& str, flag_type atom) : m_atom(atom), m_str(str), m_index(index_counter++) {}
 
-  private:
-    explicit mana(const std::string& str, amount_type amount = 1) : mana(str, types::basic, amount) {}
+    static constexpr flag_type color_mask = (atoms::white | atoms::blue | atoms::black | atoms::red | atoms::green);
 
-    index_type m_index;
+    flag_type m_atom;
     std::string m_str;
-    types m_type;
-    amount_type m_cmd_amount;
+    index_type m_index;
   };
 
   class waste_mana final : public mana
@@ -61,7 +78,7 @@ namespace card
     virtual ~waste_mana() = default;
 
   private:
-    explicit waste_mana(const std::string& str) : mana(str, mana::types::waste, 1) {}
+    explicit waste_mana(const std::string& str) : mana(str, atoms::colorless) {}
   };
 
   class snow_mana final : public mana
@@ -77,8 +94,7 @@ namespace card
     virtual ~snow_mana() = default;
 
   private:
-    explicit snow_mana(const std::string& str, const mana& alternate) : mana(str, mana::types::snow, 1), m_alternate(alternate) {}
-    mana m_alternate;
+    explicit snow_mana(const std::string& str, flag_type atom) : mana(str, atom) {}
   };
 
   class hybrid_mana final : public mana
@@ -104,7 +120,7 @@ namespace card
     virtual ~hybrid_mana() = default;
 
   private:
-    explicit hybrid_mana(const std::string& str) : mana(str, mana::types::hybrid, 1) {}
+    explicit hybrid_mana(const std::string& str, flag_type atom) : mana(str, atom) {}
   };
 
   class phyrexian_mana final : public mana
@@ -119,7 +135,7 @@ namespace card
     virtual ~phyrexian_mana() = default;
 
   private:
-    explicit phyrexian_mana(const std::string& str) : mana(str, mana::types::phyrexian, 1) {}
+    explicit phyrexian_mana(const std::string& str, flag_type atom) : mana(str, atom) {}
   };
 
 } /*namespace card*/

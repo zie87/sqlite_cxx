@@ -25,6 +25,7 @@ namespace player
     bool is_payable(const card::mana_cost& cost) const noexcept;
 
   private:
+    inline bool is_valid_mana(const card::mana& mana) const noexcept { return (mana.is_basic() || mana.is_snow()); }
     std::map<card::mana, amount_type> m_mana;
   };
 } /*namespace player*/
