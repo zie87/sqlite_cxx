@@ -17,6 +17,13 @@ set (TEST_THIRD_PARTY_INCLUDE_PATH  ${CATCH_INCLUDE_PATH})
 set (TEST_THIRD_PARTY_INCLUDE_PATH  ${TEST_THIRD_PARTY_INCLUDE_PATH} PARENT_SCOPE)
 
 # -------------------------------------------------------------------------
+# json
+
+#configure directories
+set (JSON_MODULE_PATH  "${THIRD_PARTY_MODULE_PATH}/json")
+set (JSON_INCLUDE_PATH "${SDL2_CXX_MODULE_PATH}/single_include")
+
+# -------------------------------------------------------------------------
 # sdl2_cxx
 
 #configure directories

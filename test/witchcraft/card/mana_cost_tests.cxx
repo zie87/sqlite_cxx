@@ -31,7 +31,7 @@ TEST_CASE("test mana cost creation from string", "[card]")
     REQUIRE(costs.converted() == 1);
 
     costs = card::mana_cost::from_string("2/B");
-    REQUIRE(costs.converted() == 1);
+    REQUIRE(costs.converted() == 2);
   }
 
   SECTION("test phyrexian mana cost parsing")

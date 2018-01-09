@@ -45,7 +45,12 @@ namespace card
     inline bool is_phyrexian() const noexcept { return is_kind_of_atom(atoms::or_2_life); }
 
     inline bool is_undefined_amount() const noexcept { return is_kind_of_atom(atoms::undefined_amount); }
-    inline amount_type cmd_amount() const noexcept { return is_undefined_amount() ? 0 : 1; }
+    inline amount_type cmd_amount() const noexcept
+    {
+      if (is_undefined_amount()) return 0;
+      if (is_kind_of_atom(atoms::or_2_colorless)) return 2;
+      return 1;
+    }
 
     static const mana white;
     static const mana blue;
