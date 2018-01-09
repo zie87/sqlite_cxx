@@ -24,7 +24,7 @@ namespace card
   const snow_mana snow_mana::green("S", atoms::green | atoms::snow);
   const snow_mana snow_mana::colorless("S", atoms::colorless | atoms::snow);
 
-  const waste_mana waste_mana::colorless("W");
+  const waste_mana waste_mana::colorless("C");
 
   const hybrid_mana hybrid_mana::white_blue("W/U", atoms::white | atoms::blue);
   const hybrid_mana hybrid_mana::white_black("W/B", atoms::white | atoms::black);
