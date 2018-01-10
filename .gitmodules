@@ -1,0 +1,6 @@
+[submodule "3rd/Catch"]
+	path = 3rd/Catch
+	url = https://github.com/philsquared/Catch.git
+[submodule "cmake"]
+	path = cmake
+	url = https://github.com/zie87/cmake_modules.git
